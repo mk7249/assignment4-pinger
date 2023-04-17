@@ -47,9 +47,17 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         recPacket, addr = mySocket.recvfrom(1024)
 
         # Fill in start
-
+        
         # Fetch the ICMP header from the IP packet
-
+        header = recPacket[20:28]
+        type, code, chkSum, id, seq = struct.unpack("bbHHh", header)
+        
+        if(ID == id)
+            dataSize = struct.calcsize("d",recPacket[28:])
+            sendTime = struct.unpack("d",recPacket[28:28+dataSize])[0]
+            travelTime = (timeRecieved-sendTime) * 1000
+            return [TravelTime, [recPacket[8],addr[0]]]
+            
         # Fill in end
         timeLeft = timeLeft - howLongInSelect
         if timeLeft <= 0:
@@ -109,7 +117,7 @@ def ping(host, timeout=1):
     
     for i in range(0,4): #Four pings will be sent (loop runs for i=0, 1, 2, 3)
         delay, statistics = doOnePing(dest, timeout) #what is stored into delay and statistics?
-        response = #store your bytes, rtt, and ttle here in your response pandas dataframe. An example is commented out below for vars
+        response = response + ({"rtt":delay, "bytes":statistics[0], "ttl":statistics[1]}) #store your bytes, rtt, and ttle here in your response pandas dataframe. An example is commented out below for vars
         print(delay) 
         time.sleep(1)  # wait one second
     
@@ -117,10 +125,10 @@ def ping(host, timeout=1):
     packet_recv = 0
     #fill in start. UPDATE THE QUESTION MARKS
     for index, row in response.iterrows():
-        if ???? == 0: #access your response df to determine if you received a packet or not
-            packet_lost = #????
+        if row["rtt"] == 0: #access your response df to determine if you received a packet or not
+            packet_lost = packet_lost + 1
         else:
-            packet_recv = #????
+            packet_recv = packet_recv + 1
     #fill in end
 
     #You should have the values of delay for each ping here structured in a pandas dataframe; 
